@@ -7,7 +7,7 @@ const AnimalCardList = (Props) => {
     <>
       {animalList.map((animal, index) => {
         return (
-          <div key={index} style={{ width: "30%" }}>
+          <div key={index}>
             <AnimalCard name={animal.name} species={animal.species} />
           </div>
         );

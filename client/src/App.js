@@ -6,13 +6,16 @@ import SearchBox from "./components/searchBox";
 function App() {
   const [animalList, setAnimalList] = useState([]);
   const [searchField, setSearchField] = useState({ searchField: "" });
+  const [errorField, setErrorField] = useState({ searchField: "" });
 
   const onSearchChange = (event) => {
     setSearchField({ searchField: event.target.value });
   };
 
+  let emptyArray = [];
+
   useEffect(() => {
-    fetch("http://localhost:8000/api/v1/animals", {
+    fetch("http://localhost:8000/api/v1/animal", {
       method: "GET",
       mode: "cors",
     })
@@ -21,9 +24,16 @@ function App() {
       })
 
       .then((data) => {
-        if (data) {
+        console.log(data);
+
+        if (data.message === "🔍 - Not Found - /api/v1/animal") {
+          setAnimalList(emptyArray);
+        } else {
           setAnimalList(data);
         }
+      })
+      .catch((error) => {
+        setAnimalList(emptyArray);
       });
   }, []); // eslint-disable-line
 
@@ -40,16 +50,23 @@ function App() {
   return !animalList.length ? (
     <h1>Loading</h1>
   ) : (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: "#282c34", height: "90em" }}>
       <div style={{ backgroundColor: "#282c34" }}>
+        <h1 style={{ color: "white" }}>MACU Code Challenge</h1>
+        <br />
+        <h1 style={{ color: "white" }}>Animals List</h1>
         <SearchBox searchChange={onSearchChange} />
       </div>
 
-      <header className="App-header">
-        <div className="container">
-          <AnimalCardList animalList={filterAnimals} />
+      <div className="m-6" style={{ display: "inline-flex" }}>
+        <div className="flex-row" style={{ justifyContent: "space-between" }}>
+          {errorField ? (
+            <h1>errorField</h1>
+          ) : (
+            <AnimalCardList animalList={filterAnimals} />
+          )}
         </div>
-      </header>
+      </div>
     </div>
   );
 }
